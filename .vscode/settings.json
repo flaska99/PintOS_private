@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "interrupt.h": "c",
+        "stddef.h": "c",
+        "stdio.h": "c",
+        "thread.h": "c",
+        "optional": "c",
+        "istream": "c",
+        "ostream": "c",
+        "system_error": "c",
+        "array": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "utility": "c"
+    }
+}
