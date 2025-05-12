@@ -10,29 +10,37 @@ Executing 'priority-donate-chain':
 (priority-donate-chain) begin
 (priority-donate-chain) main got lock.
 (priority-donate-chain) main should have priority 3.  Actual priority: 0.
+(priority-donate-chain) interloper 1 finished.
 (priority-donate-chain) main should have priority 6.  Actual priority: 0.
+(priority-donate-chain) interloper 2 finished.
 (priority-donate-chain) main should have priority 9.  Actual priority: 0.
+(priority-donate-chain) interloper 3 finished.
 (priority-donate-chain) main should have priority 12.  Actual priority: 0.
+(priority-donate-chain) interloper 4 finished.
 (priority-donate-chain) main should have priority 15.  Actual priority: 0.
+(priority-donate-chain) interloper 5 finished.
 (priority-donate-chain) main should have priority 18.  Actual priority: 0.
+(priority-donate-chain) interloper 6 finished.
 (priority-donate-chain) main should have priority 21.  Actual priority: 0.
+(priority-donate-chain) interloper 7 finished.
 (priority-donate-chain) main finishing with priority 0.
 (priority-donate-chain) end
 Execution of 'priority-donate-chain' complete.
-Timer: 43 ticks
-Interrupt 0x0d (#GP General Protection Exception) at rip=8004208db0
+Timer: 47 ticks
+Thread: 0 idle ticks, 48 kernel ticks, 0 user ticks
+Interrupt 0x0d (#GP General Protection Exception) at rip=8004208eb8
  cr2=0000000000000000 error=            4000
 rax 0000000000000000 rbx 0000000000204400 rcx 00000080040b8000 rdx 00000000000003d4
 rsp 0000008004000db8 rbp 0000008004000df0 rsi 000000000000800f rdi 0000000000000001
-rip 0000008004208db0 r8 0000008004000ec8  r9 00000080042166fa r10 0000000000000000
+rip 0000008004208eb8 r8 0000008004000ec8  r9 0000008004216802 r10 0000000000000000
 r11 0000000000000000 r12 0000000000000000 r13 0000000000000000 r14 0000000000000000
 r15 0000000000000000 rflags 00200006
 es: 0010 ds: 0010 cs: 0008 ss: 0010
 Kernel PANIC at ../../threads/interrupt.c:361 in intr_handler(): Unexpected interrupt
-Call stack: 0x8004213412 0x80042089a5 0x8004208d57 0x8004207ab9 0x800420dafb 0x80042167d8 0x8004216737 0x800421095e 0x80042165e6 0x8004210915 0x800420d18b 0x800420681b 0x80042067dd 0x800420613d.
+Call stack: 0x800421351a 0x8004208aad 0x8004208e5f 0x8004207bc1 0x800420dc03 0x80042168e0 0x800421683f 0x8004210a66 0x80042166ee 0x8004210a1d 0x8004206b0a 0x8004206827 0x80042067dd 0x800420613d.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 44 ticks
-Thread: 0 idle ticks, 44 kernel ticks, 0 user ticks
+Timer: 49 ticks
+Thread: 0 idle ticks, 49 kernel ticks, 0 user ticks
 Console: 2

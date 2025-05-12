@@ -16,7 +16,7 @@ Executing 'priority-donate-lower':
 (priority-donate-lower) end
 Execution of 'priority-donate-lower' complete.
 Timer: 34 ticks
-Thread: 0 idle ticks, 35 kernel ticks, 0 user ticks
+Thread: 0 idle ticks, 34 kernel ticks, 0 user ticks
 Console: 820 characters output
 Keyboard: 0 keys pressed
 Powering off...

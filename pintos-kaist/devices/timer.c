@@ -107,7 +107,7 @@ timer_sleep (int64_t ticks) {
 	// while (timer_elapsed (start) < ticks)
 	// 	thread_yield ();
 	if (timer_elapsed(start) < ticks) 
-		thread_sleep(start + ticks);
+		 thread_sleep(start + ticks);
 }
 
 /* Suspends execution for approximately MS milliseconds. */
@@ -134,6 +134,7 @@ timer_print_stats (void) {
 	printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
 
+
 /* Timer interrupt handler. */
 static void // timer_interrupt 가 일어났을때 확인할 것 !
 timer_interrupt (struct intr_frame *args UNUSED) {
