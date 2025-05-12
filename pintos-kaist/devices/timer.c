@@ -140,7 +140,8 @@ static void // timer_interrupt 가 일어났을때 확인할 것 !
 timer_interrupt (struct intr_frame *args UNUSED) {
 	ticks++;
 	thread_tick (); // running 스레드의 cpu 사용량 업데이트
-	wakeup_thread (ticks); // 깨울친구 찾아가기
+	if (check_global_tick)
+		wakeup_thread (ticks); // 깨울친구 찾아가기
 }
 
 
