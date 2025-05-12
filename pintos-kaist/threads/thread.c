@@ -63,7 +63,7 @@ bool thread_mlfqs;
 
 static void kernel_thread (thread_func *, void *aux);
 static bool cmp_wakeup_tick (const struct list_elem *, const struct list_elem *, void *);
-static bool cmp_priority(const struct list_elem *, const struct list_elem *, void *);
+
 static void idle (void *aux UNUSED);
 static struct thread *next_thread_to_run (void);
 static void init_thread (struct thread *, const char *name, int priority);
@@ -71,7 +71,6 @@ static void do_schedule(int status);
 static void schedule (void);
 static tid_t allocate_tid (void);
 static void update_next_tick_to_awake();
-static void thread_ready_check (struct thread *);
 
 /* Returns true if T appears to point to a valid thread. */
 #define is_thread(t) ((t) != NULL && (t)->magic == THREAD_MAGIC)
@@ -119,7 +118,6 @@ thread_init (void) {
 	lock_init (&tid_lock); // 쓰레드 tid 할당 락 (세마포어로 되어있음)
 	list_init (&ready_list); // 쓰레드 ready 리스트
 	list_init (&sleep_list); // 쓰레드 sleep 리스트
-	list_init (&wait_list); // 쓰레드 wait 리스트
 	list_init (&destruction_req); //삭제 예약된 스레드들의 리스트
 
 	/* Set up a thread structure for the running thread. */
@@ -222,9 +220,10 @@ thread_create (const char *name, int priority,
 	return tid;
 }
 
-static void
+void
 thread_ready_check (struct thread *t){
-	if (thread_current ()->priority < t->priority)
+	if ((thread_current ()->priority < t->priority) && 
+		thread_current() != t)
 		thread_yield();
 }
 
@@ -260,6 +259,7 @@ thread_unblock (struct thread *t) {
 	ASSERT (t->status == THREAD_BLOCKED);
 	list_insert_ordered (&ready_list, &t->elem, cmp_priority, NULL);
 	t->status = THREAD_READY;
+		
 	intr_set_level (old_level);
 }
 
@@ -381,7 +381,12 @@ wakeup_thread (int64_t target_ticks){
 	update_next_tick_to_awake(); 
 }
 
-static bool // 추가 함수 : 우선순위 순 정렬
+bool
+check_global_tick(int64_t ticks){
+	return ticks >= next_tick_to_awake;
+}
+
+bool // 추가 함수 : 우선순위 순 정렬
 cmp_priority(const struct list_elem *a_, const struct list_elem *b_, void *aux UNUSED){ 
 	struct thread *a = list_entry(a_, struct thread, elem);
 	struct thread *b = list_entry(b_, struct thread, elem);
