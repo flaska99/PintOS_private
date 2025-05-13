@@ -71,6 +71,7 @@ static void do_schedule(int status);
 static void schedule (void);
 static tid_t allocate_tid (void);
 static void update_next_tick_to_awake();
+static void thread_ready_check (struct thread *);
 
 /* Returns true if T appears to point to a valid thread. */
 #define is_thread(t) ((t) != NULL && (t)->magic == THREAD_MAGIC)
@@ -220,10 +221,9 @@ thread_create (const char *name, int priority,
 	return tid;
 }
 
-void
+static void
 thread_ready_check (struct thread *t){
-	if ((thread_current ()->priority < t->priority) && 
-		thread_current() != t)
+	if (thread_current ()->priority < t->priority)
 		thread_yield();
 }
 
@@ -397,10 +397,21 @@ cmp_priority(const struct list_elem *a_, const struct list_elem *b_, void *aux U
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) {
-	thread_current ()->priority = new_priority;
-	// list_sort(&ready_list, cmp_priority, NULL);
-	if (!list_empty(&ready_list))
-		thread_ready_check(list_entry(list_front(&ready_list), struct thread, elem));
+	struct thread *curr = thread_current();
+	curr->original_priority = new_priority;
+
+	
+	reset_priority();  
+	thread_re_sort();  
+}
+
+
+void thread_re_sort (){
+	if (!list_empty(&ready_list)){
+		list_sort(&ready_list, cmp_priority, NULL);
+		if (thread_current()->priority < list_entry(list_front(&ready_list), struct thread, elem)->priority)
+			thread_yield();
+	}
 }
 
 /* Returns the current thread's priority. */
@@ -496,8 +507,11 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->status = THREAD_BLOCKED;
 	strlcpy (t->name, name, sizeof t->name);
 	t->tf.rsp = (uint64_t) t + PGSIZE - sizeof (void *);
-	t->priority = priority;
-	t->magic = THREAD_MAGIC;
+	t->priority = priority;   
+	t->original_priority = priority; // 기존 우선순위
+	t->magic = THREAD_MAGIC; // 
+	list_init(&t->donations); // donations 리스트 초기화
+	t->wait_on_lock = NULL;   
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
