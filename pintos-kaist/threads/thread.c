@@ -399,8 +399,6 @@ void
 thread_set_priority (int new_priority) {
 	struct thread *curr = thread_current();
 	curr->original_priority = new_priority;
-
-	
 	reset_priority();  
 	thread_re_sort();  
 }

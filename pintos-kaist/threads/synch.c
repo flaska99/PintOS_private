@@ -207,12 +207,13 @@ lock_acquire (struct lock *lock) {
 	if(lock->holder != NULL){
 		curr->wait_on_lock = lock;
 		donate_priority(curr);
+      thread_re_sort();
 	}
 
 	sema_down (&lock->semaphore);
 	lock->holder = thread_current ();
 	curr->wait_on_lock = NULL;
-	thread_re_sort();
+
 }
 
 static void
@@ -319,7 +320,7 @@ reset_priority(void) {
     // 남아 있는 도네이터 중 가장 높은 priority를 반영
     if (!list_empty(&curr->donations)) {
         struct list_elem *target;
-        for (target = list_begin(&curr->donations); target != list_end(&curr->donations); target = list_next(e)) {
+        for (target = list_begin(&curr->donations); target != list_end(&curr->donations); target = list_next(target)) {
             struct thread *donator = list_entry(target, struct thread, d_elem);
             if (donator->priority > max_priority) {
                 max_priority = donator->priority;
