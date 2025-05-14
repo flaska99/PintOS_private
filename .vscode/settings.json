@@ -12,6 +12,8 @@
         "tuple": "c",
         "type_traits": "c",
         "utility": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "list.h": "c",
+        "synch.h": "c"
     }
 }
