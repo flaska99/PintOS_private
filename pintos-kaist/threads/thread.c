@@ -223,7 +223,7 @@ thread_create (const char *name, int priority,
 
 static void
 thread_ready_check (struct thread *t){
-	if (thread_current ()->priority < t->priority)
+	if ((thread_current() != idle_thread) && (thread_current ()->priority < t->priority))
 		thread_yield();
 }
 
@@ -317,6 +317,9 @@ thread_yield (void) {
 	struct thread *curr = thread_current ();
 	enum intr_level old_level;
 
+	if (curr == idle_thread)
+		return;
+	
 	ASSERT (!intr_context ());
 
 	old_level = intr_disable ();
