@@ -27,6 +27,9 @@
         "*.inc": "c",
         "loader.h": "c",
         "intrinsic.h": "c",
-        "disk.h": "c"
+        "disk.h": "c",
+        "file.h": "c",
+        "palloc.h": "c",
+        "string.h": "c"
     }
 }

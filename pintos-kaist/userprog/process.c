@@ -21,11 +21,13 @@
 #ifdef VM
 #include "vm/vm.h"
 #endif
+#define MAX_ARGS 99 // 인자 최대 크기
 
 static void process_cleanup (void);
 static bool load (const char *file_name, struct intr_frame *if_);
 static void initd (void *f_name);
 static void __do_fork (void *);
+static void push_by_stack(struct intr_frame *, char *[], int);
 
 /* General process initializer for initd and other process. */
 static void
@@ -161,9 +163,21 @@ error:
 /* Switch the current execution context to the f_name.
  * Returns -1 on fail. */
 int
-process_exec (void *f_name) {
-	char *file_name = f_name;
+process_exec (void *f_name) { 
 	bool success;
+
+
+	//인자 파싱하기
+   	char *token, *save_ptr;
+	char *argv[MAX_ARGS];
+	int argc = 0;
+
+	// 인자 파싱
+   	for (token = strtok_r (f_name, " ", &save_ptr); token != NULL; 
+	token = strtok_r (NULL, " ", &save_ptr)) 
+		argv[argc++] = token;
+
+	char *file_name = argv[0];
 
 	/* We cannot use the intr_frame in the thread structure.
 	 * This is because when current thread rescheduled,
@@ -173,21 +187,45 @@ process_exec (void *f_name) {
 	_if.cs = SEL_UCSEG;
 	_if.eflags = FLAG_IF | FLAG_MBS;
 
-
 	/* We first kill the current context */
 	process_cleanup ();
 
 	/* And then load the binary */
 	success = load (file_name, &_if);
-
+	push_by_stack(&_if, argv, argc);
 	/* If load failed, quit. */
-	palloc_free_page (file_name);
+	palloc_free_page (f_name);
 	if (!success)
 		return -1;
 
 	/* Start switched process. */
 	do_iret (&_if);
 	NOT_REACHED ();
+}
+
+static void //스택에 인자 푸시
+push_by_stack(struct intr_frame *if_, char *argv[], int argc){
+	if_->R.rdi = argc;
+
+	for (int i = argc - 1; i >= 0 ; i--){
+		if_->rsp -= strlen(argv[i]) + 1;
+		memcpy(if_->rsp, argv[i], strlen(argv[i]) + 1);
+	}
+
+	while(if_->rsp % 8 != 0){
+		if_->rsp--;
+	}
+
+	for (int i = argc; i >= 0 ; i--){
+		if_->rsp -= 0x8;
+		memcpy(if_->rsp, &argv[i], 8); 
+	}
+
+	if_->R.rsi = (uint64_t)if_->rsp;
+    if_->rsp -= 0x8;
+    memset((char *)if_->rsp, 0 , 8);
+
+	hex_dump(if_->rsp, if_->rsp , USER_STACK - if_->rsp , true);
 }
 
 
@@ -556,6 +594,8 @@ setup_stack (struct intr_frame *if_) {
 	}
 	return success;
 }
+
+
 
 /* Adds a mapping from user virtual address UPAGE to kernel
  * virtual address KPAGE to the page table.
