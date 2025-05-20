@@ -1,4 +1,4 @@
-Kernel command line: -q -f put args-none run args-none
+Kernel command line: -q -f put exit run exit
 0 ~ 9fc00 1
 100000 ~ 13e0000 1
 Pintos booting with: 
@@ -10,21 +10,17 @@ hd0:1: detected 20,160 sector (9 MB) disk, model "QEMU HARDDISK", serial "QM0000
 hd1:0: detected 102 sector (51 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
 Boot complete.
-Putting 'args-none' into the file system...
-Executing 'args-none':
-(args) begin
-(args) argc = 1
-(args) argv[0] = 'args-none'
-(args) argv[1] = null
-(args) end
-args-none: exit(0)
-Execution of 'args-none' complete.
-Timer: 316 ticks
-Thread: 33 idle ticks, 280 kernel ticks, 3 user ticks
+Putting 'exit' into the file system...
+Executing 'exit':
+(exit) begin
+exit: exit(57)
+Execution of 'exit' complete.
+Timer: 312 ticks
+Thread: 35 idle ticks, 276 kernel ticks, 1 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 80 reads, 232 writes
 hd1:0: 102 reads, 0 writes
-Console: 898 characters output
+Console: 791 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
