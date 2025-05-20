@@ -65,6 +65,23 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	
 }
 
+
+// 유저 주소 체크 함수
+void 
+check_user(const void *uaddr){
+	if (uaddr == NULL || !is_user_vaddr(uaddr)){
+		sys_exit(0);
+	}
+}
+
+// 유저 버퍼 체크 함수
+void
+check_user_buffer(const void *uaddr, size_t size) {
+	for (size_t i = 0; i < size; i++){
+		check_user((const uint8_t *)uaddr + i);
+	}
+}
+
 void 
 sys_halt (void){
 	power_off();
@@ -72,6 +89,7 @@ sys_halt (void){
 
 int
 sys_write(int fd, const void *buffer, unsigned size){
+	check_user_buffer(buffer, size); // 유저 버퍼 체크
 
 	if(fd == 1){
 		putbuf((const char *)buffer, (size_t)size);
@@ -87,12 +105,11 @@ sys_exit (int status){
 	
 	printf ("%s: exit(%d)\n", cur->name, status); 
 	thread_exit ();
-	
-
 }
 
 void
 sys_exec (const char *cmd_line){
 
 }
+
 
