@@ -21,7 +21,7 @@
 #ifdef VM
 #include "vm/vm.h"
 #endif
-#define MAX_ARGS 99 // 인자 최대 크기
+#define MAX_ARGS 64 // 인자 최대 크기
 
 static void process_cleanup (void);
 static bool load (const char *file_name, struct intr_frame *if_);
@@ -166,7 +166,6 @@ int
 process_exec (void *f_name) { 
 	bool success;
 
-
 	//인자 파싱하기
    	char *token, *save_ptr;
 	char *argv[MAX_ARGS];
@@ -193,6 +192,8 @@ process_exec (void *f_name) {
 	/* And then load the binary */
 	success = load (file_name, &_if);
 	push_by_stack(&_if, argv, argc);
+	hex_dump(_if.rsp, _if.rsp , USER_STACK - _if.rsp , true);
+	
 	/* If load failed, quit. */
 	palloc_free_page (f_name);
 	if (!success)
@@ -203,30 +204,45 @@ process_exec (void *f_name) {
 	NOT_REACHED ();
 }
 
-static void //스택에 인자 푸시
+static void
 push_by_stack(struct intr_frame *if_, char *argv[], int argc){
-	if_->R.rdi = argc;
+    char *arg_addr[argc];
 
-	for (int i = argc - 1; i >= 0 ; i--){
-		if_->rsp -= strlen(argv[i]) + 1;
-		memcpy(if_->rsp, argv[i], strlen(argv[i]) + 1);
+    
+    for (int i = argc - 1; i >= 0 ; i--){
+        size_t len = strlen(argv[i]) + 1;
+        if_->rsp -= len;
+        memcpy((void *)if_->rsp, argv[i], len);
+        arg_addr[i] = (char *)if_->rsp; 
+    }
+
+    // 8바이트 정렬
+    while (if_->rsp % 8 != 0)
+        if_->rsp--;
+
+    // NULL sentinel
+    if_->rsp -= 8;
+    memset((void *)if_->rsp, 0, 8);
+
+    // argv[i] 주소들 복사 (역순)
+    for (int i = argc - 1; i >= 0; i--) {
+        if_->rsp -= 8;
+        memcpy((void *)if_->rsp, &arg_addr[i], 8); 
+    }
+
+    // rsi = argv, rdi = argc
+    if_->R.rsi = (uint64_t)if_->rsp;
+    if_->R.rdi = argc;
+
+    // fake return address
+    if_->rsp -= 8;
+    memset((void *)if_->rsp, 0, 8);
+
+	if (if_->rsp < USER_STACK - PGSIZE) {
+    PANIC("❌ Stack overflow: rsp too low!");
 	}
-
-	while(if_->rsp % 8 != 0){
-		if_->rsp--;
-	}
-
-	for (int i = argc; i >= 0 ; i--){
-		if_->rsp -= 0x8;
-		memcpy(if_->rsp, &argv[i], 8); 
-	}
-
-	if_->R.rsi = (uint64_t)if_->rsp;
-    if_->rsp -= 0x8;
-    memset((char *)if_->rsp, 0 , 8);
-
-	hex_dump(if_->rsp, if_->rsp , USER_STACK - if_->rsp , true);
 }
+
 
 
 /* Waits for thread TID to die and returns its exit status.  If
@@ -243,10 +259,15 @@ process_wait (tid_t child_tid UNUSED) {
 	/* XXX: (Hint) The pintos exit if process_wait (initd), we recommend you
 	 * XXX:       to add infinite loop here before
 	 * XXX:       implementing the process_wait. */
-	while(1)
+	int cnt = 0;
+
+	while(cnt < 400000000)
 	{
-		
+		cnt++;
 	}
+	// while(1){
+		
+	// }
 	
 	return -1;
 }
@@ -591,6 +612,7 @@ setup_stack (struct intr_frame *if_) {
 			if_->rsp = USER_STACK;
 		else
 			palloc_free_page (kpage);
+		
 	}
 	return success;
 }
