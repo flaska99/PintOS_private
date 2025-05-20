@@ -47,34 +47,47 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	switch (f->R.rax)
 	{
 		case SYS_HALT:
-			power_off();
+			sys_halt();
 			break;
-		case SYS_WRITE:		
+		case SYS_WRITE:
+			f->R.rax = sys_write(f->R.rdi, f->R.rsi, f->R.rdx);	
 			break;
 		case SYS_EXIT:
+			sys_exit(f->R.rdi);
 			break;
 		default:
-			sys_exit(-1);
+			sys_exit(f->R.rdi);
 			break;
 	}
 
 	// printf ("system call!\n");
-	// thread_exit ();
+	//
 	
 }
 
 void 
 sys_halt (void){
-
+	power_off();
 }
 
 int
 sys_write(int fd, const void *buffer, unsigned size){
-	putbuf()
+
+	if(fd == 1){
+		putbuf((const char *)buffer, (size_t)size);
+		return size;
+	}
+
+	return -1;
 }
 
 void 
 sys_exit (int status){
+	struct thread *cur = thread_current ();
+	
+	printf ("%s: exit(%d)\n", cur->name, status); 
+	thread_exit ();
+	
 
 }
 

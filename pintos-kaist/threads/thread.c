@@ -506,7 +506,8 @@ init_thread (struct thread *t, const char *name, int priority) {
 
 	memset (t, 0, sizeof *t);
 	t->status = THREAD_BLOCKED;
-	strlcpy (t->name, name, sizeof t->name);
+	int size = strcspn(name, " "); // 공백까지 문자열 보기
+	strlcpy (t->name, name, size+1); // 문자열 제목에 추가 
 	t->tf.rsp = (uint64_t) t + PGSIZE - sizeof (void *);
 	t->priority = priority;   
 	t->original_priority = priority; // 기존 우선순위
