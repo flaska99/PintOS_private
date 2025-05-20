@@ -1,5 +1,6 @@
 #include "userprog/syscall.h"
 #include <stdio.h>
+#include "include/lib/kernel/stdio.h"
 #include "lib/user/syscall.h"
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
@@ -42,8 +43,43 @@ syscall_init (void) {
 void
 syscall_handler (struct intr_frame *f UNUSED) {
 	// TODO: Your implementation goes here.
-	
-	printf ("system call!\n");
-	thread_exit ();
+
+	switch (f->R.rax)
+	{
+		case SYS_HALT:
+			power_off();
+			break;
+		case SYS_WRITE:		
+			break;
+		case SYS_EXIT:
+			break;
+		default:
+			sys_exit(-1);
+			break;
+	}
+
+	// printf ("system call!\n");
+	// thread_exit ();
 	
 }
+
+void 
+sys_halt (void){
+
+}
+
+int
+sys_write(int fd, const void *buffer, unsigned size){
+	putbuf()
+}
+
+void 
+sys_exit (int status){
+
+}
+
+void
+sys_exec (const char *cmd_line){
+
+}
+
