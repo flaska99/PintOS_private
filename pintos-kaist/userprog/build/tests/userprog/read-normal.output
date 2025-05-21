@@ -17,8 +17,8 @@ Executing 'read-normal':
 (read-normal) open "sample.txt" for verification
 read-normal: exit(4211472)
 Execution of 'read-normal' complete.
-Timer: 314 ticks
-Thread: 35 idle ticks, 277 kernel ticks, 2 user ticks
+Timer: 325 ticks
+Thread: 35 idle ticks, 287 kernel ticks, 3 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 113 reads, 248 writes
 hd1:0: 105 reads, 0 writes

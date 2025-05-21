@@ -16,8 +16,8 @@ Executing 'create-normal':
 (create-normal) create quux.dat
 create-normal: exit(4211536)
 Execution of 'create-normal' complete.
-Timer: 332 ticks
-Thread: 36 idle ticks, 294 kernel ticks, 2 user ticks
+Timer: 309 ticks
+Thread: 32 idle ticks, 276 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 80 reads, 234 writes
 hd1:0: 103 reads, 0 writes

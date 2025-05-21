@@ -17,8 +17,8 @@ Executing 'rox-child':
 (rox-child) open "child-rox"
 rox-child: exit(4212093)
 Execution of 'rox-child' complete.
-Timer: 327 ticks
-Thread: 40 idle ticks, 285 kernel ticks, 3 user ticks
+Timer: 316 ticks
+Thread: 42 idle ticks, 272 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 108 reads, 478 writes
 hd1:0: 220 reads, 0 writes

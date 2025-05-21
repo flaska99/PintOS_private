@@ -17,4 +17,5 @@ Differences in `diff -u' format:
 - (wait-twice) wait(exec()) = -1
 - (wait-twice) end
 - wait-twice: exit(0)
-+ wait-twice: exit(4211584)
++ child-simple: exit(2)
++ wait-twice: exit(4)

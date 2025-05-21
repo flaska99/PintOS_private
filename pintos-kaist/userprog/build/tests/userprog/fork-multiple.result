@@ -33,4 +33,5 @@ Differences in `diff -u' format:
 - (fork-multiple) Parent: child exit status is 7
 - (fork-multiple) end
 - fork-multiple: exit(0)
-+ fork-multiple: exit(4211664)
++ child: exit(2)
++ fork-multiple: exit(4)

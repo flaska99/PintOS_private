@@ -17,8 +17,8 @@ Executing 'write-normal':
 (write-normal) create "test.txt"
 write-normal: exit(4211714)
 Execution of 'write-normal' complete.
-Timer: 327 ticks
-Thread: 39 idle ticks, 287 kernel ticks, 2 user ticks
+Timer: 316 ticks
+Thread: 37 idle ticks, 277 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 115 reads, 252 writes
 hd1:0: 107 reads, 0 writes

@@ -24,8 +24,8 @@ r11 0000000000000206 r12 0000000000000000 r13 0000000000000000 r14 0000000000000
 r15 0000000000000000 rflags 00000212
 es: 001b ds: 001b cs: 0023 ss: 001b
 Execution of 'bad-write2' complete.
-Timer: 323 ticks
-Thread: 35 idle ticks, 274 kernel ticks, 14 user ticks
+Timer: 339 ticks
+Thread: 35 idle ticks, 286 kernel ticks, 19 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 80 reads, 232 writes
 hd1:0: 102 reads, 0 writes

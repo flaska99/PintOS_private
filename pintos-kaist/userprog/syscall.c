@@ -9,6 +9,7 @@
 #include "userprog/gdt.h"
 #include "threads/flags.h"
 #include "intrinsic.h"
+#include "userprog/process.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -48,6 +49,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
 	{
 		case SYS_HALT:
 			sys_halt();
+			break;
+		case SYS_FORK:
+			f->R.rax = sys_fork(f->R.rdi, f);
 			break;
 		case SYS_WRITE:
 			f->R.rax = sys_write(f->R.rdi, f->R.rsi, f->R.rdx);	
@@ -105,6 +109,11 @@ sys_exit (int status){
 	
 	printf ("%s: exit(%d)\n", cur->name, status); 
 	thread_exit ();
+}
+
+pid_t
+sys_fork (const char *thread_name, struct intr_frame *if_ UNUSED){
+	return process_fork(thread_name, if_);
 }
 
 void

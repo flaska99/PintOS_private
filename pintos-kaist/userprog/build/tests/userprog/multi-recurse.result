@@ -102,11 +102,11 @@ Differences in `diff -u' format:
 - (multi-recurse) end 1
 - multi-recurse: exit(1)
 - (multi-recurse) end 2
-- multi-recurse: exit(2)
+  multi-recurse: exit(2)
 - (multi-recurse) end 3
 - multi-recurse: exit(3)
 - (multi-recurse) end 4
-- multi-recurse: exit(4)
+  multi-recurse: exit(4)
 - (multi-recurse) end 5
 - multi-recurse: exit(5)
 - (multi-recurse) end 6
@@ -129,4 +129,3 @@ Differences in `diff -u' format:
 - multi-recurse: exit(14)
 - (multi-recurse) end 15
 - multi-recurse: exit(15)
-+ multi-recurse: exit(4213392)
