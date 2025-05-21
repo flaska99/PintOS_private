@@ -30,6 +30,7 @@
         "disk.h": "c",
         "file.h": "c",
         "palloc.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "process.h": "c"
     }
 }

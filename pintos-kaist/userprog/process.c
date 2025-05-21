@@ -332,7 +332,7 @@ process_wait (tid_t child_tid UNUSED) {
 	 * XXX:       implementing the process_wait. */
 	int cnt = 0;
 
-	while(cnt < 400000000)
+	while(cnt < 700000000)
 	{
 		cnt++;
 	}

@@ -17,8 +17,8 @@ Executing 'exec-arg':
 (exec-arg) I'm your father
 exec-arg: exit(4211504)
 Execution of 'exec-arg' complete.
-Timer: 320 ticks
-Thread: 41 idle ticks, 279 kernel ticks, 1 user ticks
+Timer: 499 ticks
+Thread: 44 idle ticks, 453 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 107 reads, 448 writes
 hd1:0: 205 reads, 0 writes

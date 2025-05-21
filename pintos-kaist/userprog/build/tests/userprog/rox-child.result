@@ -18,7 +18,7 @@ Acceptable output:
 Differences in `diff -u' format:
   (rox-child) begin
   (rox-child) open "child-rox"
-- (rox-child) read "child-rox"
+  (rox-child) read "child-rox"
 - (rox-child) write "child-rox"
 - (rox-child) exec "child-rox 1"
 - (child-rox) begin
@@ -29,4 +29,4 @@ Differences in `diff -u' format:
 - (rox-child) write "child-rox"
 - (rox-child) end
 - rox-child: exit(0)
-+ rox-child: exit(4212093)
++ rox-child: exit(2)

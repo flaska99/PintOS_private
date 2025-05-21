@@ -13,14 +13,16 @@ Boot complete.
 Putting 'create-empty' into the file system...
 Executing 'create-empty':
 (create-empty) begin
-create-empty: exit(4211488)
+(create-empty) create(""): 0
+(create-empty) end
+create-empty: exit(0)
 Execution of 'create-empty' complete.
-Timer: 312 ticks
-Thread: 36 idle ticks, 276 kernel ticks, 1 user ticks
+Timer: 487 ticks
+Thread: 36 idle ticks, 450 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 80 reads, 234 writes
+hd0:1: 84 reads, 250 writes
 hd1:0: 103 reads, 0 writes
-Console: 852 characters output
+Console: 894 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
