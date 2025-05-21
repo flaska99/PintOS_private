@@ -14,14 +14,13 @@ Putting 'lg-full' into the file system...
 Executing 'lg-full':
 (lg-full) begin
 (lg-full) create "quux"
-lg-full: exit(4212064)
 Execution of 'lg-full' complete.
-Timer: 326 ticks
-Thread: 34 idle ticks, 291 kernel ticks, 3 user ticks
+Timer: 488 ticks
+Thread: 34 idle ticks, 453 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 81 reads, 242 writes
+hd0:1: 84 reads, 295 writes
 hd1:0: 107 reads, 0 writes
-Console: 841 characters output
+Console: 818 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

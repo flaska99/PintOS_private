@@ -14,14 +14,14 @@ Putting 'create-exists' into the file system...
 Executing 'create-exists':
 (create-exists) begin
 (create-exists) create quux.dat
-create-exists: exit(4211888)
+(create-exists) create warble.dat
 Execution of 'create-exists' complete.
-Timer: 313 ticks
-Thread: 37 idle ticks, 274 kernel ticks, 2 user ticks
+Timer: 493 ticks
+Thread: 34 idle ticks, 456 kernel ticks, 3 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 81 reads, 236 writes
+hd0:1: 115 reads, 259 writes
 hd1:0: 104 reads, 0 writes
-Console: 891 characters output
+Console: 897 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

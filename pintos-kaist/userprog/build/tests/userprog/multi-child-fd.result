@@ -23,4 +23,5 @@ Differences in `diff -u' format:
 - (multi-child-fd) verified contents of "sample.txt"
 - (multi-child-fd) end
 - multi-child-fd: exit(0)
-+ multi-child-fd: exit(4211730)
++ child-close: exit(2)
++ multi-child-fd: exit(4)

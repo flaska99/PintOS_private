@@ -10,9 +10,21 @@
 #include "threads/flags.h"
 #include "intrinsic.h"
 #include "userprog/process.h"
+#include "filesys/filesys.h"
+#include "include/filesys/file.h"
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
+void check_user(const void *);
+void check_user_buffer(const void *, size_t);
+bool sys_create(const char *, unsigned int);
+int sys_open (const char *);
+bool check_fd_table(int);
+void sys_close(int );
+void sys_halt (void);
+int sys_write(int , const void *, unsigned);
+void sys_exit (int);
+pid_t sys_fork (const char *, struct intr_frame *);
 
 /* System call.
  *
@@ -50,6 +62,15 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_HALT:
 			sys_halt();
 			break;
+		case SYS_OPEN:
+			f->R.rax = sys_open(f->R.rdi);
+			break;
+		case SYS_CREATE:
+			f->R.rax = sys_create(f->R.rdi, f->R.rsi);
+			break;
+		case SYS_CLOSE:
+			sys_close(f->R.rdi);
+			break;
 		case SYS_FORK:
 			f->R.rax = sys_fork(f->R.rdi, f);
 			break;
@@ -73,8 +94,9 @@ syscall_handler (struct intr_frame *f UNUSED) {
 // 유저 주소 체크 함수
 void 
 check_user(const void *uaddr){
-	if (uaddr == NULL || !is_user_vaddr(uaddr)){
-		sys_exit(0);
+	if (uaddr == NULL || !is_user_vaddr(uaddr) ||
+		 pml4_get_page(thread_current()->pml4, uaddr) == NULL){
+		sys_exit(-1);
 	}
 }
 
@@ -85,6 +107,54 @@ check_user_buffer(const void *uaddr, size_t size) {
 		check_user((const uint8_t *)uaddr + i);
 	}
 }
+
+bool 
+sys_create(const char *file, unsigned int initial_size) {
+	check_user(file);
+	return filesys_create(file, initial_size);
+}
+
+int
+sys_open (const char *file){
+	check_user(file);
+
+	struct file *f = filesys_open(file);
+
+    if (f == NULL) return -1;
+	
+	struct thread *curr = thread_current();
+
+	for (int fd = FD_START; fd < FD_MAX; fd++) {
+		if (curr->fd_table[fd] == NULL) {
+			curr->fd_table[fd] = f;
+			return fd;
+		}
+	}
+	sys_exit(-1); 
+}
+
+
+bool 
+check_fd_table(int fd){
+	if ((FD_START <= fd) && (fd < FD_MAX) 
+		&& (thread_current()->fd_table[fd] != NULL))
+		return true;
+	return false;
+}
+
+void 
+sys_close(int fd) {
+	if(check_fd_table(fd))
+		return;
+
+	struct file *f = thread_current()->fd_table[fd];
+
+    file_close(f);
+    thread_current()->fd_table[fd] = NULL;
+}
+
+
+
 
 void 
 sys_halt (void){
@@ -116,9 +186,9 @@ sys_fork (const char *thread_name, struct intr_frame *if_ UNUSED){
 	return process_fork(thread_name, if_);
 }
 
-void
-sys_exec (const char *cmd_line){
+// void
+// sys_exec (const char *cmd_line){
 
-}
+// }
 
 

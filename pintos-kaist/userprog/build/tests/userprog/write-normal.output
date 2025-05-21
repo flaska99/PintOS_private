@@ -15,14 +15,16 @@ Putting 'sample.txt' into the file system...
 Executing 'write-normal':
 (write-normal) begin
 (write-normal) create "test.txt"
-write-normal: exit(4211714)
+(write-normal) open "test.txt"
+(write-normal) write() returned -1 instead of 373: FAILED
+write-normal: exit(1)
 Execution of 'write-normal' complete.
-Timer: 316 ticks
-Thread: 37 idle ticks, 277 kernel ticks, 2 user ticks
+Timer: 497 ticks
+Thread: 36 idle ticks, 459 kernel ticks, 3 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 115 reads, 252 writes
+hd0:1: 143 reads, 265 writes
 hd1:0: 107 reads, 0 writes
-Console: 946 characters output
+Console: 1029 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

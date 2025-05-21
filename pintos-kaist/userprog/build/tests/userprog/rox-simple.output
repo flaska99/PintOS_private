@@ -14,14 +14,15 @@ Putting 'rox-simple' into the file system...
 Executing 'rox-simple':
 (rox-simple) begin
 (rox-simple) open "rox-simple"
-rox-simple: exit(4211714)
+(rox-simple) read "rox-simple"
+rox-simple: exit(2)
 Execution of 'rox-simple' complete.
-Timer: 312 ticks
-Thread: 38 idle ticks, 272 kernel ticks, 2 user ticks
+Timer: 488 ticks
+Thread: 34 idle ticks, 452 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 80 reads, 234 writes
+hd0:1: 83 reads, 234 writes
 hd1:0: 103 reads, 0 writes
-Console: 869 characters output
+Console: 894 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

@@ -15,4 +15,4 @@ Differences in `diff -u' format:
 - (read-normal) close "sample.txt"
 - (read-normal) end
 - read-normal: exit(0)
-+ read-normal: exit(4211472)
++ read-normal: exit(2)

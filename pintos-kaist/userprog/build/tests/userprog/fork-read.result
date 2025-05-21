@@ -21,4 +21,4 @@ Differences in `diff -u' format:
 - (fork-read) Parent success
 - (fork-read) end
 - fork-read: exit(0)
-+ fork-read: exit(4212466)
++ fork-read: exit(2)
