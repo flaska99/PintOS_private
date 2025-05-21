@@ -18,8 +18,8 @@ Executing 'exec-read':
 (exec-read) open "sample.txt"
 exec-read: exit(4212258)
 Execution of 'exec-read' complete.
-Timer: 328 ticks
-Thread: 43 idle ticks, 283 kernel ticks, 2 user ticks
+Timer: 326 ticks
+Thread: 41 idle ticks, 283 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 139 reads, 506 writes
 hd1:0: 229 reads, 0 writes

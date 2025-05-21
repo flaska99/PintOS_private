@@ -14,14 +14,15 @@ Putting 'wait-twice' into the file system...
 Putting 'child-simple' into the file system...
 Executing 'wait-twice':
 (wait-twice) begin
-wait-twice: exit(4211584)
+child-simple: exit(2)
+wait-twice: exit(4)
 Execution of 'wait-twice' complete.
-Timer: 321 ticks
-Thread: 40 idle ticks, 281 kernel ticks, 1 user ticks
+Timer: 319 ticks
+Thread: 39 idle ticks, 278 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 107 reads, 446 writes
 hd1:0: 204 reads, 0 writes
-Console: 904 characters output
+Console: 920 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

@@ -16,8 +16,8 @@ Executing 'rox-simple':
 (rox-simple) open "rox-simple"
 rox-simple: exit(4211714)
 Execution of 'rox-simple' complete.
-Timer: 322 ticks
-Thread: 37 idle ticks, 282 kernel ticks, 4 user ticks
+Timer: 312 ticks
+Thread: 38 idle ticks, 272 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 80 reads, 234 writes
 hd1:0: 103 reads, 0 writes

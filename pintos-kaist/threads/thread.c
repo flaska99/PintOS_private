@@ -504,6 +504,8 @@ init_thread (struct thread *t, const char *name, int priority) {
 	ASSERT (PRI_MIN <= priority && priority <= PRI_MAX);
 	ASSERT (name != NULL);
 
+// * project 1
+///////////////////////////////////////////////////////////////////////////////////////////
 	memset (t, 0, sizeof *t);
 	t->status = THREAD_BLOCKED;
 	strlcpy (t->name, name, sizeof t->name);
@@ -512,7 +514,14 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->original_priority = priority; // 기존 우선순위
 	t->magic = THREAD_MAGIC; // 
 	list_init(&t->donations); // donations 리스트 초기화
-	t->wait_on_lock = NULL;   
+	t->wait_on_lock = NULL;
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// * project 2
+/////////////////////////////////////////////////////////////////////////////////////////////
+	list_init(&t->child_list); // child list 초기화
+	t->parent = NULL; 		   // 부모 쓰레드 초기값 null
+/////////////////////////////////////////////////////////////////////////////////////////////
 }
 
 /* Chooses and returns the next thread to be scheduled.  Should
