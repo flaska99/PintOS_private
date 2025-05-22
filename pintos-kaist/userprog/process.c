@@ -144,7 +144,7 @@ duplicate_pte (uint64_t *pte, void *va, void *aux) {
 	parent_page = pml4_get_page (parent->pml4, va);
 
 	if (parent_page == NULL)
-		return true;
+		return false;
 
 	/* 3. TODO: Allocate new PAL_USER page for the child and set result to
 	 *    TODO: NEWPAGE. */
@@ -238,13 +238,20 @@ int
 process_exec (void *f_name) { 
 	bool success;
 
+	char *fn_copy = palloc_get_page(PAL_ZERO); 
+	if (fn_copy == NULL) return -1;
+
+	strlcpy(fn_copy, f_name, PGSIZE);  // 유저 메모리에서 안전하게 복사
+
 	//인자 파싱하기
    	char *token, *save_ptr;
 	char *argv[MAX_ARGS];
 	int argc = 0;
 
+	memset(argv, 0, sizeof(argv)); // 각 포인터를 NULL로 초기화
+
 	// 인자 파싱
-   	for (token = strtok_r (f_name, " ", &save_ptr); token != NULL; 
+   	for (token = strtok_r (fn_copy, " ", &save_ptr); token != NULL; 
 	token = strtok_r (NULL, " ", &save_ptr)) 
 		argv[argc++] = token;
 
@@ -266,7 +273,7 @@ process_exec (void *f_name) {
 	push_by_stack(&_if, argv, argc);
 	
 	/* If load failed, quit. */
-	palloc_free_page (f_name);
+	palloc_free_page (fn_copy);
 	if (!success)
 		return -1;
 

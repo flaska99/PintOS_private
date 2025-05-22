@@ -24,7 +24,8 @@ void sys_close(int );
 void sys_halt (void);
 int sys_write(int , const void *, unsigned);
 void sys_exit (int);
-pid_t sys_fork (const char *, struct intr_frame *);
+tid_t sys_fork (const char *, struct intr_frame *);
+tid_t sys_exec (const char*);
 
 /* System call.
  *
@@ -62,6 +63,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_HALT:
 			sys_halt();
 			break;
+		case SYS_EXEC:
+			sys_exec(f->R.rdi);
 		case SYS_OPEN:
 			f->R.rax = sys_open(f->R.rdi);
 			break;
@@ -181,14 +184,18 @@ sys_exit (int status){
 	thread_exit ();
 }
 
-pid_t
+tid_t
 sys_fork (const char *thread_name, struct intr_frame *if_ UNUSED){
 	return process_fork(thread_name, if_);
 }
 
-// void
-// sys_exec (const char *cmd_line){
+tid_t
+sys_exec (const char *cmd_line){
+	if (process_exec(cmd_line) == -1){
+		return PID_ERROR;
+	}
 
-// }
+	return thread_current()->tid;
+}
 
 
