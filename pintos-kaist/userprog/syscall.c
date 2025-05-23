@@ -1,7 +1,6 @@
 #include "userprog/syscall.h"
 #include <stdio.h>
 #include "include/lib/kernel/stdio.h"
-#include "lib/user/syscall.h"
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
@@ -30,6 +29,7 @@ tid_t sys_fork (const char *, struct intr_frame *);
 tid_t sys_exec (const char*);
 int sys_read(int, void *, unsigned);
 int sys_filesize(int);
+int sys_wait(tid_t);
 
 struct lock file_lock; // file lock
 
@@ -77,6 +77,8 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_OPEN:
 			f->R.rax = sys_open(f->R.rdi);
 			break;
+		case SYS_WAIT:
+			f->R.rax = sys_wait(f->R.rdi);
 		case SYS_READ:
 			f->R.rax = sys_read(f->R.rdi, f->R.rsi, f->R.rdx);
 			break;
@@ -111,7 +113,7 @@ syscall_handler (struct intr_frame *f UNUSED) {
 // 유저 주소 체크 함수
 void 
 check_user(const void *uaddr){
-	if (uaddr == NULL || !is_user_vaddr(uaddr) ||
+	if (uaddr == NULL || is_kernel_vaddr(uaddr) || 
 		pml4_get_page(thread_current()->pml4, uaddr) == NULL){
 		sys_exit(-1);
 	}
@@ -120,8 +122,9 @@ check_user(const void *uaddr){
 // 유저 버퍼 체크 함수
 void
 check_user_buffer(const void *uaddr, size_t size) {
+	void *start = uaddr;
 	for (size_t i = 0; i < size; i++){
-		check_user((const uint8_t *)uaddr + i);
+		check_user(start + i);
 	}
 }
 
@@ -140,6 +143,11 @@ sys_filesize(int fd){
 	return size;
 }
 
+int
+sys_wait(tid_t child_tid){
+	process_wait(child_tid);
+	return ;
+}
 
 bool 
 sys_create(const char *file, unsigned int initial_size) {
@@ -215,15 +223,15 @@ sys_write(int fd, const void *buffer, unsigned size){
 
 	if(fd == 1){
 		lock_acquire(&file_lock);
-		putbuf((const char *)buffer, (size_t)size);
+		putbuf((char *)buffer, (size_t)size);
 		lock_release(&file_lock);
 		return size;
 	}
 
-	if(fd >= FD_START && fd < FD_MAX){
+	if((fd >= FD_START) && (fd < FD_MAX) && (cur->fd_table[fd] != NULL)){
 		struct file *openfile = cur->fd_table[fd];
 		lock_acquire(&file_lock);
-		int w_size = (int) file_write(openfile, buffer, size);
+		int w_size = file_write(openfile, (void *)buffer, (off_t)size);
 		lock_release(&file_lock);
 		return w_size;
 	}
@@ -278,7 +286,7 @@ sys_exec (const char *cmd_line){
 	check_user(cmd_line);
 
 	if (process_exec(cmd_line) == -1){
-		return PID_ERROR;
+		return TID_ERROR;
 	}
 
 	return thread_current()->tid;
