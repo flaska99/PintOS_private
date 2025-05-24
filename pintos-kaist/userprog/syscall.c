@@ -272,7 +272,8 @@ sys_exit (int status){
 		cur->parent->child_exit_status = status;
 		sema_up(&(cur->parent->exit_wait));
 	}
-	printf ("%s: exit(%d)\n", cur->name, status); 
+	printf ("%s: exit(%d)\n", cur->name, status);
+	process_exit();
 	thread_exit ();
 }
 

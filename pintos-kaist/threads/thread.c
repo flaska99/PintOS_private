@@ -529,6 +529,7 @@ init_thread (struct thread *t, const char *name, int priority) {
 	memset(t->fd_table, 0, sizeof t->fd_table);
 	sema_init(&(t->exit_wait), 0);
 	t->child_exit_status = NULL;
+	t->is_wait = false;
 /////////////////////////////////////////////////////////////////////////////////////////////
 }
 

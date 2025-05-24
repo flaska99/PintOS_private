@@ -358,9 +358,10 @@ process_wait (tid_t child_tid UNUSED) {
 		}
 	}
 
-	if (child == NULL)
+	if (child == NULL || child->is_wait)
 		return -1;
-	
+
+	child->is_wait = true;
 	sema_down(&(cur->exit_wait));
 
 	if(cur->child_exit_status != NULL){
@@ -374,7 +375,6 @@ process_wait (tid_t child_tid UNUSED) {
 /* Exit the process. This function is called by thread_exit (). */
 void
 process_exit (void) {
-	struct thread *curr = thread_current ();
 	/* TODO: Your code goes here.
 	 * TODO: Implement process termination message (see
 	 * TODO: project2/process_termination.html).
