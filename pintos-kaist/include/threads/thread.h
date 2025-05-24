@@ -112,6 +112,7 @@ struct thread {
 	int child_exit_status;
 
 	struct semaphore exit_wait;			/*프로세스 대기 세마포어 exec*/
+	bool is_wait;
 	
 
 #ifdef USERPROG
