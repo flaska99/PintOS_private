@@ -72,13 +72,14 @@ syscall_handler (struct intr_frame *f UNUSED) {
 			sys_halt();
 			break;
 		case SYS_EXEC:
-			sys_exec(f->R.rdi);
+			f->R.rax = sys_exec(f->R.rdi);
 			break;
 		case SYS_OPEN:
 			f->R.rax = sys_open(f->R.rdi);
 			break;
 		case SYS_WAIT:
 			f->R.rax = sys_wait(f->R.rdi);
+			break;
 		case SYS_READ:
 			f->R.rax = sys_read(f->R.rdi, f->R.rsi, f->R.rdx);
 			break;
@@ -145,8 +146,7 @@ sys_filesize(int fd){
 
 int
 sys_wait(tid_t child_tid){
-	process_wait(child_tid);
-	return ;
+	return process_wait(child_tid);
 }
 
 bool 
@@ -178,9 +178,6 @@ sys_open (const char *file){
 			return fd;
 		}
 	}
-
-	
-	
 	sys_exit(-1); 
 }
 
@@ -195,8 +192,7 @@ check_fd_table(int fd){
 
 void 
 sys_close(int fd) {
-	if(check_fd_table(fd) || fd >= FD_MAX 
-		|| fd < FD_START)
+	if(!check_fd_table(fd))
 		return;
 
 	struct file *f = thread_current()->fd_table[fd];
@@ -272,6 +268,10 @@ void
 sys_exit (int status){
 	struct thread *cur = thread_current ();
 	
+	if(cur->parent != NULL){
+		cur->parent->child_exit_status = status;
+		sema_up(&(cur->parent->exit_wait));
+	}
 	printf ("%s: exit(%d)\n", cur->name, status); 
 	thread_exit ();
 }

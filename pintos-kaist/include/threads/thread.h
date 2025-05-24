@@ -5,6 +5,7 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/interrupt.h"
+#include "threads/synch.h"
 #ifdef VM
 #include "vm/vm.h"
 #endif
@@ -105,8 +106,13 @@ struct thread {
 
 	struct thread *parent;				/*부모 쓰레드*/
 	struct list child_list;				/*자식 리스트*/
-	struct list_elem child_elem;		/*자식 리스트 elem*/
 	struct file *fd_table[FD_MAX];         /*fd table*/
+	struct list_elem child_elem;		/*자식 리스트 elem*/
+
+	int child_exit_status;
+
+	struct semaphore exit_wait;			/*프로세스 대기 세마포어 exec*/
+	
 
 #ifdef USERPROG
 	/* Owned by userprog/process.c. */
@@ -121,6 +127,8 @@ struct thread {
 	struct intr_frame tf;               /* Information for switching */
 	unsigned magic;                     /* Detects stack overflow. */
 };
+
+
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
