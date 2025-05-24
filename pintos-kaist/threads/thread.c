@@ -204,6 +204,11 @@ thread_create (const char *name, int priority,
 	init_thread (t, name, priority);
 	tid = t->tid = allocate_tid ();
 
+	list_push_front(&(thread_current()->child_list), &(t->child_elem));
+
+	t->parent = thread_current();
+	
+
 	/* Call the kernel_thread if it scheduled.
 	 * Note) rdi is 1st argument, and rsi is 2nd argument. */
 	t->tf.rip = (uintptr_t) kernel_thread;
@@ -522,6 +527,8 @@ init_thread (struct thread *t, const char *name, int priority) {
 	list_init(&t->child_list); // child list 초기화
 	t->parent = NULL; 		   // 부모 쓰레드 초기값 null
 	memset(t->fd_table, 0, sizeof t->fd_table);
+	sema_init(&(t->exit_wait), 0);
+	t->child_exit_status = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////
 }
 
