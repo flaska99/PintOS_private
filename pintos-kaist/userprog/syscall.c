@@ -10,7 +10,7 @@
 #include "intrinsic.h"
 #include "userprog/process.h"
 #include "filesys/filesys.h"
-#include "include/filesys/file.h"
+#include "filesys/file.h"
 #include "include/threads/synch.h"
 #include "devices/input.h"
 
@@ -30,6 +30,7 @@ tid_t sys_exec (const char*);
 int sys_read(int, void *, unsigned);
 int sys_filesize(int);
 int sys_wait(tid_t);
+bool sys_remove (const char *);
 
 struct lock file_lock; // file lock
 
@@ -92,6 +93,12 @@ syscall_handler (struct intr_frame *f UNUSED) {
 		case SYS_CLOSE:
 			sys_close(f->R.rdi);
 			break;
+		case SYS_REMOVE:
+			f->R.rax = sys_remove(f->R.rdi);
+			break;
+		case SYS_SEEK:
+			sys_seek(f->R.rdi, f->R.rsi);
+			break;
 		case SYS_FORK:
 			f->R.rax = sys_fork(f->R.rdi, f);
 			break;
@@ -135,6 +142,17 @@ check_user_buffer(const void *uaddr, size_t size) {
 	}
 }
 
+bool 
+sys_remove (const char *file){
+	check_user(file);
+
+	lock_acquire(&file_lock);
+	bool status = filesys_remove(file);
+	lock_release(&file_lock);
+
+	return status;
+}
+
 int
 sys_filesize(int fd){
 	struct thread *cur = thread_current();
@@ -148,6 +166,24 @@ sys_filesize(int fd){
 	lock_release(&file_lock);
 
 	return size;
+}
+
+void
+sys_seek(int fd, unsigned position){
+	if(fd < 2){
+		return;
+	}
+
+	struct thread *curr = thread_current();
+	struct file *f = curr->fd_table[fd];
+
+	if(f == NULL){
+		return;
+	}
+
+	lock_acquire(&file_lock);
+	file_seek(f, position);
+	lock_release(&file_lock);
 }
 
 int
@@ -277,9 +313,13 @@ sys_exit (int status){
 
 	if (cur->my_info != NULL) {
     	cur->my_info->exit_status = status;
-    	sema_up(&(cur->my_info->exit_sema)); 
+    	sema_up(&(cur->my_info->exit_sema));
 	}
-	
+
+	if(cur->running_file != NULL){
+		file_close(cur->running_file);
+	}
+
 	printf ("%s: exit(%d)\n", cur->name, status);
 	thread_exit ();
 }
