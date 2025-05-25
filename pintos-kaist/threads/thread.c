@@ -541,6 +541,7 @@ init_thread (struct thread *t, const char *name, int priority) {
 	t->parent = NULL; 		   // 부모 쓰레드 초기값 null
 	memset(t->fd_table, 0, sizeof t->fd_table);
 	t->my_info = NULL;
+	t->running_file = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////
 }
 

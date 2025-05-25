@@ -108,6 +108,7 @@ struct thread {
 	struct list child_list;				/*자식 리스트*/
 	struct file *fd_table[FD_MAX];         /*fd table*/
 	struct child_info *my_info;
+	struct file *running_file;
 
 	// int child_exit_status;
 
