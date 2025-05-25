@@ -268,12 +268,14 @@ void
 sys_exit (int status){
 	struct thread *cur = thread_current ();
 	
-	if(cur->parent != NULL){
-		cur->parent->child_exit_status = status;
-		sema_up(&(cur->parent->exit_wait));
+
+	cur->my_info->exit_status = status;
+
+	if (cur->parent != NULL) {
+		sema_up(&(cur->my_info->exit_sema));   
 	}
+	
 	printf ("%s: exit(%d)\n", cur->name, status);
-	process_exit();
 	thread_exit ();
 }
 

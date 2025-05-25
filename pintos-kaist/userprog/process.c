@@ -186,8 +186,8 @@ __do_fork (void *aux) {
 
 	struct thread *current = thread_current ();
 
-	current->parent = parent;
-	list_push_front(&(parent->child_list), &(current->child_elem));
+	// current->parent = parent;
+	// list_push_front(&(parent->child_list), &());
 	if_.R.rax = 0;
 
 	/* TODO: somehow pass the parent_if. (i.e. process_fork()'s if_) */
@@ -340,35 +340,31 @@ process_wait (tid_t child_tid UNUSED) {
 	/* XXX: (Hint) The pintos exit if process_wait (initd), we recommend you
 	 * XXX:       to add infinite loop here before
 	 * XXX:       implementing the process_wait. */
-	struct thread *cur = thread_current();
-	struct list *cur_child_list = &(cur->child_list);
-	struct list_elem *e;
-	struct thread *child = NULL;
+    struct thread *cur = thread_current();
+    struct list_elem *e;
+    struct child_info *child = NULL;
 
-	for (e = list_begin(cur_child_list); 
-	e != list_end(cur_child_list); e = list_next(e))
-	{
-		if(e == NULL){
-			break;
-		}
-		struct thread *is_child = list_entry(e, struct thread, child_elem);
-		if(is_child->tid == child_tid){
-			child = is_child;
-			break;
-		}
-	}
+    
+    for (e = list_begin(&cur->child_list); e != list_end(&cur->child_list); e = list_next(e)) {
+        struct child_info *t = list_entry(e, struct child_info, elem);
+        if (t->tid == child_tid) {
+            child = t;
+            break;
+        }
+    }
 
-	if (child == NULL || child->is_wait)
-		return -1;
+    if (child == NULL || child->is_waited) {
+        return -1; 
+    }
 
-	child->is_wait = true;
-	sema_down(&(cur->exit_wait));
+    child->is_waited = true;
+    sema_down(&(child->exit_sema)); 
 
-	if(cur->child_exit_status != NULL){
-		return cur->child_exit_status;
-	}
+    int status = child->exit_status;
+	list_remove(&(child->elem));
+	palloc_free_page(child);
 
-	return -1;
+    return status;
 }
 
 
