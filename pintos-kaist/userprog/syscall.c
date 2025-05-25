@@ -65,7 +65,7 @@ syscall_init (void) {
 void
 syscall_handler (struct intr_frame *f UNUSED) {
 	// TODO: Your implementation goes here.
-
+	
 	switch (f->R.rax)
 	{
 		case SYS_HALT:
@@ -120,12 +120,18 @@ check_user(const void *uaddr){
 	}
 }
 
-// 유저 버퍼 체크 함수
 void
 check_user_buffer(const void *uaddr, size_t size) {
-	void *start = uaddr;
-	for (size_t i = 0; i < size; i++){
-		check_user(start + i);
+	uint8_t *start = (uint8_t *) uaddr;
+	uint8_t *end = start + size;
+
+	while (start < end) {
+		if (!is_user_vaddr(start) || 
+			pml4_get_page(thread_current()->pml4, start) == NULL)
+			sys_exit(-1);
+
+		// 다음 페이지 경계로 이동
+		start = pg_round_down(start) + PGSIZE;
 	}
 }
 
@@ -198,7 +204,7 @@ sys_close(int fd) {
 	struct file *f = thread_current()->fd_table[fd];
 
 	if (f == NULL)
-		return -1;
+		return;
 
 	lock_acquire(&file_lock);
     file_close(f);
@@ -232,7 +238,7 @@ sys_write(int fd, const void *buffer, unsigned size){
 		return w_size;
 	}
 
-	return -1;
+	sys_exit(-1);
 }
 
 int sys_read(int fd, void *buffer, unsigned size){
@@ -253,7 +259,7 @@ int sys_read(int fd, void *buffer, unsigned size){
 		struct file *openfile = cur->fd_table[fd];
 
 		if (openfile == NULL)
-			return -1;
+			sys_exit(-1);
 
 		lock_acquire(&file_lock);
 		int r_size = file_read(openfile, buffer, size);
@@ -261,7 +267,7 @@ int sys_read(int fd, void *buffer, unsigned size){
 		return r_size;
 	}
 
-	return -1;
+	sys_exit(-1);
 }
 
 void 
@@ -269,10 +275,9 @@ sys_exit (int status){
 	struct thread *cur = thread_current ();
 	
 
-	cur->my_info->exit_status = status;
-
-	if (cur->parent != NULL) {
-		sema_up(&(cur->my_info->exit_sema));   
+	if (cur->my_info != NULL) {
+    	cur->my_info->exit_status = status;
+    	sema_up(&(cur->my_info->exit_sema)); 
 	}
 	
 	printf ("%s: exit(%d)\n", cur->name, status);
@@ -289,7 +294,7 @@ sys_exec (const char *cmd_line){
 	check_user(cmd_line);
 
 	if (process_exec(cmd_line) == -1){
-		return TID_ERROR;
+		sys_exit(-1);
 	}
 
 	return thread_current()->tid;

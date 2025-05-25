@@ -245,6 +245,9 @@ int
 process_exec (void *f_name) { 
 	bool success;
 
+	if(f_name == NULL) return -1;
+	
+
 	char *fn_copy = palloc_get_page(PAL_ZERO); 
 	if (fn_copy == NULL) return -1;
 
@@ -272,17 +275,24 @@ process_exec (void *f_name) {
 	_if.cs = SEL_UCSEG;
 	_if.eflags = FLAG_IF | FLAG_MBS;
 
+	
 	/* We first kill the current context */
 	process_cleanup ();
 
 	/* And then load the binary */
 	success = load (file_name, &_if);
-	push_by_stack(&_if, argv, argc);
 	
 	/* If load failed, quit. */
-	palloc_free_page (fn_copy);
-	if (!success)
+
+
+	if (!success){
+		palloc_free_page (fn_copy);
 		return -1;
+	}
+
+
+	push_by_stack(&_if, argv, argc);
+	palloc_free_page (fn_copy);
 
 	/* Start switched process. */
 	do_iret (&_if);
@@ -293,12 +303,12 @@ static void
 push_by_stack(struct intr_frame *if_, char *argv[], int argc){
     char *arg_addr[argc];
 
-    
+    // argv[i]의 문자열 내용을 유저 스택에 복사
     for (int i = argc - 1; i >= 0 ; i--){
         size_t len = strlen(argv[i]) + 1;
         if_->rsp -= len;
         memcpy((void *)if_->rsp, argv[i], len);
-        arg_addr[i] = (char *)if_->rsp; 
+        arg_addr[i] = (char *)if_->rsp;  
     }
 
     // 8바이트 정렬
@@ -312,7 +322,7 @@ push_by_stack(struct intr_frame *if_, char *argv[], int argc){
     // argv[i] 주소들 복사 (역순)
     for (int i = argc - 1; i >= 0; i--) {
         if_->rsp -= 8;
-        memcpy((void *)if_->rsp, &arg_addr[i], 8); 
+        memcpy((void *)if_->rsp, &arg_addr[i], 8);
     }
 
     // rsi = argv, rdi = argc
@@ -323,6 +333,7 @@ push_by_stack(struct intr_frame *if_, char *argv[], int argc){
     if_->rsp -= 8;
     memset((void *)if_->rsp, 0, 8);
 }
+
 
 
 
@@ -375,6 +386,7 @@ process_exit (void) {
 	 * TODO: Implement process termination message (see
 	 * TODO: project2/process_termination.html).
 	 * TODO: We recommend you to implement process resource cleanup here. */
+	
 
 	process_cleanup ();
 }

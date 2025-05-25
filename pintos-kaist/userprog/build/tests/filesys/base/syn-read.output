@@ -35,11 +35,11 @@ child-syn-read: exit(9)
 child-syn-read: exit(2)
 child-syn-read: exit(3)
 child-syn-read: exit(5)
+child-syn-read: exit(6)
 child-syn-read: exit(1)
 (syn-read) wait for child 2 of 10 returned 1 (expected 1)
 (syn-read) wait for child 3 of 10 returned 2 (expected 2)
 (syn-read) wait for child 4 of 10 returned 3 (expected 3)
-child-syn-read: exit(6)
 child-syn-read: exit(7)
 child-syn-read: exit(4)
 (syn-read) wait for child 5 of 10 returned 4 (expected 4)
@@ -51,8 +51,8 @@ child-syn-read: exit(4)
 (syn-read) end
 syn-read: exit(0)
 Execution of 'syn-read' complete.
-Timer: 520 ticks
-Thread: 259 idle ticks, 46 kernel ticks, 215 user ticks
+Timer: 505 ticks
+Thread: 239 idle ticks, 51 kernel ticks, 215 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 10969 reads, 504 writes
 hd1:0: 225 reads, 0 writes

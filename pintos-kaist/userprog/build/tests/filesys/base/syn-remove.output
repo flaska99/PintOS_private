@@ -18,8 +18,8 @@ Executing 'syn-remove':
 (syn-remove) remove "deleteme"
 syn-remove: exit(-1)
 Execution of 'syn-remove' complete.
-Timer: 78 ticks
-Thread: 35 idle ticks, 36 kernel ticks, 7 user ticks
+Timer: 82 ticks
+Thread: 40 idle ticks, 37 kernel ticks, 5 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 108 reads, 261 writes
 hd1:0: 109 reads, 0 writes
