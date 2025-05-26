@@ -32,6 +32,8 @@
         "palloc.h": "c",
         "string.h": "c",
         "process.h": "c",
-        "filesys.h": "c"
+        "filesys.h": "c",
+        "init.h": "c",
+        "mmu.h": "c"
     }
 }

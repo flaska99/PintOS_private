@@ -220,7 +220,12 @@ sys_open (const char *file){
 			return fd;
 		}
 	}
-	sys_exit(-1); 
+
+	/* FD 테이블이 가득 찼다면 열린 파일을 반드시 닫아 준다. */
+    lock_acquire (&file_lock);
+    file_close (f);
+    lock_release (&file_lock);
+	return -1;
 }
 
 
@@ -282,13 +287,11 @@ int sys_read(int fd, void *buffer, unsigned size){
 	struct thread *cur = thread_current ();
 
 	if(fd == 0){
-		// lock_acquire(&file_lock);
 		for (int i = 0; i < (int) size; i++){
 			char *buf = (char *) buffer;
 			buf[i] = input_getc();
-		// lock_release(&file_lock);
-		return size;
 		}
+		return size;
 	}
 
 	if(fd >= FD_START && fd < FD_MAX){
@@ -309,18 +312,12 @@ int sys_read(int fd, void *buffer, unsigned size){
 void 
 sys_exit (int status){
 	struct thread *cur = thread_current ();
-	
-
 	if (cur->my_info != NULL) {
     	cur->my_info->exit_status = status;
-    	sema_up(&(cur->my_info->exit_sema));
 	}
-
-	if(cur->running_file != NULL){
-		file_close(cur->running_file);
-	}
-
+	
 	printf ("%s: exit(%d)\n", cur->name, status);
+	
 	thread_exit ();
 }
 
@@ -339,5 +336,4 @@ sys_exec (const char *cmd_line){
 
 	return thread_current()->tid;
 }
-
 
